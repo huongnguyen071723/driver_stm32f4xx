@@ -133,6 +133,18 @@ typedef struct {
 } RCC_RegDef_t;
 
 /**
+ * definition structure for EXTx
+ */
+typedef struct {
+	__vo uint32_t IMR;
+	__vo uint32_t EMR;
+	__vo uint32_t RTSR;
+	__vo uint32_t FTSR;
+	__vo uint32_t SWIER;
+	__vo uint32_t PR;
+} EXTI_RegDef_t;
+
+/**
  *GPIOx definition (convert register address to GPIO_RegDef_t)
  */
 #define GPIOA 							((GPIO_RegDef_t *) GPIOA_BASEADDR)
@@ -149,6 +161,12 @@ typedef struct {
  * RCC definition (convert register address to RCC_RegDef_t)
  */
 #define RCC 							((RCC_RegDef_t *) RCC_BASEADDR)
+
+/**
+ * EXT definition
+ */
+#define EXTI 							((EXTI_RegDef_t *) EXTI_BASEADDR)
+
 
 /**
  * Enable clock for GPIOx peripheral
