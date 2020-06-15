@@ -23,11 +23,41 @@
 #define GPIO_PIN_RESET					DISABLE
 
 /**
+ * ARM Cortex M4 processor NVIC register
+ */
+#define NVIC_ISER0						((__vo uint32_t *) 0xE000E100)
+#define NVIC_ISER1						((__vo uint32_t *) 0xE000E104)
+#define NVIC_ISER2						((__vo uint32_t *) 0xE000E108)
+#define NVIC_ISER3						((__vo uint32_t *) 0xE000E10C)
+
+#define NVIC_ICER0						((__vo uint32_t *) 0xE000E180)
+#define NVIC_ICER1						((__vo uint32_t *) 0xE000E184)
+#define NVIC_ICER2						((__vo uint32_t *) 0xE000E188)
+#define NVIC_ICER3						((__vo uint32_t *) 0xE000E18C)
+
+#define  NVIC_IPR0						((__vo uint32_t *) 0xE000E400)
+#define  NVIC_IPR1						((__vo uint32_t *) 0xE000E404)
+#define  NVIC_IPR2						((__vo uint32_t *) 0xE000E408)
+#define  NVIC_IPR3						((__vo uint32_t *) 0xE000E40C)
+
+
+/**
  * base address of flash and SRAM memories
  */
 #define FLASH_BASEADDR					0x08000000U
 #define SRAM1_BASEADDR					0x20000000U
 #define SRAM 							SRAM1_BASEADDR
+
+/**
+ * IRQ (Interrupt request) numbers of STM32f407xx
+ */
+#define 	IRQ_NO_EXTI0				6
+#define 	IRQ_NO_EXTI1				7
+#define 	IRQ_NO_EXTI2				8
+#define 	IRQ_NO_EXTI3				9
+#define 	IRQ_NO_EXTI4				10
+#define 	IRQ_NO_EXTI9_5				23
+#define 	IRQ_NO_EXTI15_10			40
 
 /**
  * AHBx and APB bus peripheral base address
@@ -106,28 +136,24 @@ typedef struct {
 	uint32_t RESERVED0;
 	__vo uint32_t APB1RSTR;
 	__vo uint32_t APB2RSTR;
-	uint32_t RESERVED1;
-	uint32_t RESERVED2;
+	uint32_t RESERVED1[2];
 	__vo uint32_t AHB1ENR;
 	__vo uint32_t AHB2ENR;
 	__vo uint32_t AHB3ENR;
-	uint32_t RESERVED3;
+	uint32_t RESERVED2;
 	__vo uint32_t APB1ENR;
 	__vo uint32_t APB2ENR;
-	uint32_t RESERVED4;
-	uint32_t RESERVED5;
+	uint32_t RESERVED3[2];
 	__vo uint32_t AHB1LPENR;
 	__vo uint32_t AHB2LPENR;
 	__vo uint32_t AHB3LPENR;
 	__vo uint32_t RESERVED6;
 	__vo uint32_t APB1LPENR;
 	__vo uint32_t APB2LPENR;
-	uint32_t RESERVED7;
-	uint32_t RESERVED8;
+	uint32_t RESERVED4[2];
 	__vo uint32_t BDCR;
 	__vo uint32_t CSR;
-	uint32_t RESERVED9;
-	uint32_t RESERVED10;
+	uint32_t RESERVED5[2];
 	__vo uint32_t SSCGR;
 	__vo uint32_t PLLI2SCFGR;
 } RCC_RegDef_t;
@@ -143,6 +169,19 @@ typedef struct {
 	__vo uint32_t SWIER;
 	__vo uint32_t PR;
 } EXTI_RegDef_t;
+
+/**
+ * definition structure register for SYSCONFIG
+ */
+typedef struct {
+	__vo uint32_t MEMRMP;
+	__vo uint32_t PMC;
+	__vo uint32_t EXTICR[4];
+	uint8_t RESERVED1[2];
+	__vo uint32_t CMPCR;
+	uint32_t RESERVED2[2];
+	__vo uint32_t CFGR;
+} SYSCFG_RegDef_t;
 
 /**
  *GPIOx definition (convert register address to GPIO_RegDef_t)
@@ -166,7 +205,6 @@ typedef struct {
  * EXT definition
  */
 #define EXTI 							((EXTI_RegDef_t *) EXTI_BASEADDR)
-
 
 /**
  * Enable clock for GPIOx peripheral
@@ -234,7 +272,22 @@ typedef struct {
 #define SPI3_PERI_CLK_DISABLE()			(RCC->APB1ENR &= ~(1 << 15))
 
 /**
- * Enable clock to SYSCFG peripheral
+ * Enable/Disable clock to SYSCFG peripheral
  */
+#define SYSCFG_PCLK_ENABLE()				(RCC->APB2ENR |= (1<<14)) //Enable clock
+#define SYSCFG_PCLK_DISABLE()				(RCC->APB2ENR &= ~(1<<14)) //Disable clock
+#define SYSCFG 								((SYSCFG_RegDef_t *)EXTI_BASEADDR) // System configure pointer
+
+/**
+ * Definition the number for GPIO ports
+ */
+#define GPIO_port_to_number(__port)			((__port == GPIOA) ? 0 :\
+											(__port == GPIOB) ? 1 :\
+											(__port == GPIOC) ? 2 :\
+											(__port == GPIOD) ? 3 :\
+											(__port == GPIOE) ? 4 :\
+											(__port == GPIOF) ? 5 :\
+											(__port == GPIOG) ? 6 :\
+											(__port == GPIOH) ? 7 :8)
 
 #endif /* STM32F4XX_H_ */
